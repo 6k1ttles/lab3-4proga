@@ -1,8 +1,17 @@
+/**
+ * Класс Нильса
+ * Содержит основную логику использования предметов
+ */
 public class Person {
     private final String name;
     private final double bodyWeight;
     private final double muscleBonus;
-
+    /**
+     * Создает персонажа
+     * @param name Имя
+     * @param bodyWeight Вес тела (для давления без усилий)
+     * @param muscleBonus Дополнительная сила (при усилии)
+     */
     public Person(String name, double bodyWeight, double muscleBonus) {
         this.name = name;
         this.bodyWeight = bodyWeight;
@@ -12,8 +21,18 @@ public class Person {
     public String getName() {
         return name;
     }
-
+    /**
+     * попытка открыть бутылку выбранным предметом
+     * три фазы: удары, повисание и напряжение
+     *
+     * @param bottle Целевой объект
+     * @param tool Выбранный инструмент
+     * @param hammer Предмет для ударов
+     * @return Объект {@link TryResult} с итогом попытки
+     * @throws InappropriateUsageException Если tool не является рычагом
+     */
     public TryResult attemptOpen(Bottle bottle, Thing tool, Thing hammer) {
+        // Нельзя открывать молотком или самой бутылкой
         if (tool instanceof Bottle || (tool instanceof IHammer && !(tool instanceof Tool))) {
             throw new UsageException("Нельзя использовать " + tool.getName() + " как долото!");
         }
@@ -25,10 +44,12 @@ public class Person {
         Tool pryTool = (Tool) tool;
 
         try {
+            // 1) Удары по крышке кувшина
             if (hammer != null && hammer instanceof IHammer) {
                 System.out.println("Он наставил предмет \"" + tool.getName() + "\", как долото, между крышкой и горлышком и начал бить по ней камнем.");
 
                 double damage = ((IHammer) hammer).getImpactDamage();
+                // Нанесение урона интсрументам и кувшину
                 hammer.endureLoad(damage / 2);
                 tool.endureLoad(damage);
                 bottle.endureLoad(5.0);
@@ -36,9 +57,9 @@ public class Person {
                 System.out.println("Он бил до тех пор, пока " + tool.getName() + " не вошел почти наполовину.");
                 System.out.println("   [Состояние]: " + bottle.getStatsString() + " | " + tool.getStatsString());
             }
-
+            // Кувшин разбился при ударе
             if (bottle.isBroken()) return new TryResult(false, "Кувшин разбит во время подготовки.");
-
+            // 2) Повисание
             double passiveForce = pryTool.getBaseOpeningForce() + bodyWeight;
 
             System.out.println("Тогда " + name + " обеими руками ухватился за конец, торчавший снаружи, и повис на нем вместо груза.");
@@ -49,7 +70,7 @@ public class Person {
 
             if (bottle.isOpen()) return new TryResult(true, "Открыто весом.");
             if (bottle.isBroken()) return new TryResult(false, "Сломано весом.");
-
+            // 3) Напряжение мышц
             System.out.println("Он весь натужился, напряг мускулы и даже поджал ноги к животу, чтобы стать потяжелее.");
 
             double activeForce = passiveForce + muscleBonus;
@@ -62,8 +83,10 @@ public class Person {
             else return new TryResult(false, "Сил не хватило.");
 
         } catch (BrokenItemException e) {
+            // Поломка инстурмента
             System.out.println(e.getMessage());
             return new TryResult(false, "Инструмент сломался.");
         }
     }
+
 }
