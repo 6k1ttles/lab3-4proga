@@ -3,6 +3,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Класс-рассказчик:
+ * Инициализирует мир, персонажей и управляет ходом истории.
+ */
 public class Plot {
     private final Person niels;
     private final Bottle bottle;
@@ -12,12 +16,16 @@ public class Plot {
         this.niels = new Person("Нильс", 45.0, 15.0);
         this.bottle = new Bottle("Кувшин", 35.0, 95.0);
         this.environment = new ArrayList<>();
-
+        // Генерация предметов из Enum
         for (ThingType type : ThingType.values()) {
             environment.add(type.create());
         }
     }
-
+    /**
+     * Ищет предмет определенного типа в окружении
+     * @param type Тип искомого предмета
+     * @return Найденный предмет или null
+     */
     public Thing findThing(ThingType type) {
         for (Thing thing : environment) {
             if (thing.getName().equals(type.get_name())) {
@@ -26,21 +34,23 @@ public class Plot {
         }
         return null;
     }
-
+    /**
+     * Основной цикл повествования
+     */
     public void tellStory() {
         System.out.println(niels.getName() + " с облегчением вздохнул и стал осматриваться кругом...");
 
         System.out.println("\nПространство вокруг кувшина (" + bottle.getStatsString() + ", Необходимо для открытия: " + bottle.getValueToCrash() + "):");
-
+        // Камень, используется как молоток
         Thing stone = findThing(ThingType.STONE);
 
         for (Thing t : environment) {
             System.out.println("- " + t.getStatsString());
         }
-
+         // Список всех возможных типов предметов для перебора
         List<ThingType> possibleTypes = new ArrayList<>(Arrays.asList(ThingType.values()));
         Collections.shuffle(possibleTypes);
-
+        // Цикл попыток
         for (ThingType type : possibleTypes) {
             if (type == ThingType.STONE) {
                 Thing stoneItem = findThing(type);
@@ -58,7 +68,11 @@ public class Plot {
             }
         }
     }
-
+    /**
+     * Выбор предмета: вывод текста и действия персонажа
+     * @param chosenItem Выбранный предмет
+     * @param stoneHelper Вспомогательный предмет
+     */
     private void processItem(Thing chosenItem, Thing stone) {
         System.out.println("\n" + niels.getName() + " подобрал \"" + chosenItem.getName() + "\"");
 
@@ -74,8 +88,10 @@ public class Plot {
             }
 
         } catch (UsageException e) {
+            // Обработка логической ошибки
             System.out.println("Ошибка: " + e.getMessage());
             System.out.println(niels.getName() + " отбрасывает этот предмет.");
         }
     }
+
 }
