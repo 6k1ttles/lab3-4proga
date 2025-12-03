@@ -1,6 +1,15 @@
-public class HammerItem extends Thing implements IHammer {
+/**
+ * Класс для ударных инструментов
+ * Реализует интерфейс {@link Hammer}
+ */
+public class HammerItem extends Thing implements Hammer {
     private final double impactDamage;
-
+    /**
+     * Создает ударный предмет
+     * @param name Название
+     * @param strength Прочность
+     * @param impactDamage Урон
+     */
     public HammerItem(String name, double strength, double impactDamage) {
         super(name, strength);
         this.impactDamage = impactDamage;
@@ -15,4 +24,5 @@ public class HammerItem extends Thing implements IHammer {
     public double getImpactDamage() {
         return impactDamage;
     }
+
 }
