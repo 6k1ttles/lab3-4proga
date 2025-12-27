@@ -1,9 +1,11 @@
 package interfaces;
 
 /**
- * Интерфейс для забивающего инструмента
- * Может быть использован для забивания
+ * Интерфейс для ударных инструментов
  */
-public interface Hammer {
+public interface Hammer extends Durable, Locatable {
+    /**
+     * @return Урон от удара
+     */
     double getImpactDamage();
 }
